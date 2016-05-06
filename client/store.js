@@ -1,5 +1,6 @@
-import { applyMiddleware, createStore as reduxCreateStore } from 'redux';
+import { applyMiddleware,compose,  createStore as reduxCreateStore } from 'redux';
 import reducers from './reducers';
+import thunk from 'redux-thunk'
 
 const middlewares = [];
 
@@ -12,7 +13,11 @@ export function createStore(state) {
   return reduxCreateStore(
     reducers,
     state,
-    applyMiddleware.apply(null, middlewares)
+    compose(
+      applyMiddleware(thunk),
+      window.devToolsExtension ? window.devToolsExtension() : undefined,
+    )
+
   );
 }
 

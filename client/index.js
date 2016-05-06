@@ -1,5 +1,9 @@
 const router = require('./router');
 
+import injectTapEventPlugin from 'react-tap-event-plugin';
+injectTapEventPlugin();
+console.log("Injected Tap Event Plugin");
+
 // export main function for server side rendering
 global.main = router.renderToString;
 

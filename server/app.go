@@ -5,6 +5,7 @@ import (
 	"io"
 	"net/http"
 
+	"github.com/boltdb/bolt"
 	"github.com/elazarl/go-bindata-assetfs"
 	"github.com/itsjamie/go-bindata-templates"
 	"github.com/nu7hatch/gouuid"
@@ -22,6 +23,7 @@ type App struct {
 	Conf   *config.Config
 	React  *React
 	API    *API
+	DB     *bolt.DB
 }
 
 // NewApp returns initialized struct
@@ -35,6 +37,8 @@ func NewApp(opts ...AppOptions) *App {
 
 	options.init()
 
+	db, err := bolt.Open("my.db", 0600, nil)
+	Must(err)
 	// Parse config yaml string from ./conf.go
 	conf, err := config.ParseYaml(confString)
 	Must(err)
@@ -68,6 +72,7 @@ func NewApp(opts ...AppOptions) *App {
 			conf.UBool("debug"),
 			engine,
 		),
+		DB: db,
 	}
 
 	// Use precompiled embedded templates
@@ -122,7 +127,7 @@ func NewApp(opts ...AppOptions) *App {
 					return nil
 				}
 				// if static file not found handle request via react application
-				return app.React.Handle(c)
+				return noJsRender(c)
 			}
 			// Move further if err is not `Not Found`
 			return err
@@ -130,6 +135,10 @@ func NewApp(opts ...AppOptions) *App {
 	})
 
 	return app
+}
+
+func noJsRender(c *echo.Context) error {
+	return c.Render(http.StatusOK, "react.html", Resp{})
 }
 
 // Run runs the app

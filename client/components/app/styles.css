@@ -1,17 +1,9 @@
-body {
-  background-color: #f7f7f7;
-  &:before {
-    content: '';
-    height: 100%;
-    display: inline-block;
-    vertical-align: middle;
-  }
+.content {
+  margin-right: px(75);
+  margin-left: px(75);
+  margin-top: px(25);
 }
 
-:global(#app) {
-  display: inline-block;
-  vertical-align: middle;
-  padding: 0 px(100);
-  text-align: center;
-  width: 99%;
+.fullHeight {
+  height:100%;
 }
